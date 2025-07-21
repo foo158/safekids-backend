@@ -57,3 +57,8 @@ Spring Boot, MySQL, Redis, Docker, JWT 기반의 RESTful API를 제공합니다.
 
 ---
 
+## 🗂 ERD 다이어그램
+
+![ERD 다이어그램](./docs/ERD.png)
+
+

@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: safekids-backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/safekids_db
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  redis:
+    host: localhost
+    port: 6379
+
+  devtools:
+    restart:
+      enabled: false
+
+server:
+  port: 8080
+
+jwt:
+  secret: "a7sd8f7a8sd7f8a7sdf8a7sd8f7a8sdf7a8sdf7a8sdf7a8sdf"
+  expiration: 3600000  # 1시간 (ms)

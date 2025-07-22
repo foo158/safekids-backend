@@ -2,14 +2,17 @@ package com.safekids.backend.service;
 
 import com.safekids.backend.domain.User;
 import com.safekids.backend.domain.location.Location;
+import com.safekids.backend.dto.location.LocationHistoryRequestDto;
 import com.safekids.backend.dto.location.LocationRequestDto;
 import com.safekids.backend.dto.location.LocationResponseDto;
+import com.safekids.backend.exception.CustomException;
 import com.safekids.backend.repository.LocationRepository;
 import com.safekids.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +52,28 @@ public class LocationService {
 
         return new LocationResponseDto(location.getLatitude(), location.getLongitude(), location.getTimestamp());
     }
+
+    public List<LocationResponseDto> getLocationHistory(String parentEmail, Long childId,
+                                                        LocalDateTime startDate, LocalDateTime endDate) {
+        User parent = userRepository.findByEmail(parentEmail)
+                .orElseThrow(() -> new CustomException("보호자를 찾을 수 없습니다."));
+
+        User child = userRepository.findById(childId)
+                .orElseThrow(() -> new CustomException("자녀를 찾을 수 없습니다."));
+
+        if (!child.getParent().getId().equals(parent.getId())) {
+            throw new CustomException("권한이 없습니다.");
+        }
+
+        LocalDateTime start = (startDate != null) ? startDate : LocalDateTime.MIN;
+        LocalDateTime end = (endDate != null) ? endDate : LocalDateTime.now();
+
+        List<Location> locations = locationRepository.findByUserAndTimestampBetween(child, start, end);
+
+        return locations.stream()
+                .map(LocationResponseDto::fromEntity)
+                .toList();
+    }
+
 
 }
